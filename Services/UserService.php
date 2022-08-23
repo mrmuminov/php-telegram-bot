@@ -44,6 +44,6 @@ class UserService extends BaseService
 
     public function update(User $user)
     {
-        $this->userRepository->save($user);
+        $this->userRepository->update($user);
     }
 }

@@ -26,7 +26,6 @@ class User extends BaseModel
         $model = new self();
         if (!empty($id)) {
             $model->id = $id;
-            $model->is_new = false;
         }
         $model->chat_id = $chat_id;
         $model->step = $step;

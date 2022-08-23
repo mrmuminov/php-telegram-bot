@@ -24,17 +24,19 @@ class UserRepository extends BaseRepository
     public function save(User|RepositoryInterface $model): void
     {
         $this->beforeSave();
-        if ($model->is_new) {
-            $this->_insert(User::tableName(), $model->attributes());
-            $model->id = App::$database::$pdo->lastInsertId();
-            $model->is_new = false;
-        } else {
-            $columns = $model->attributes();
-            unset($columns['id']);
-            $this->_update(User::tableName(), $columns, [
-                'id' => $model->id,
-            ]);
-        }
+        $this->_insert(User::tableName(), $model->attributes());
+        $model->id = App::$database::$pdo->lastInsertId();
+        $this->afterSave();
+    }
+
+    public function update(User|RepositoryInterface $model): void
+    {
+        $this->beforeSave();
+        $columns = $model->attributes();
+        unset($columns['id']);
+        $this->_update(User::tableName(), $columns, [
+            'id' => $model->id,
+        ]);
         $this->afterSave();
     }
 
