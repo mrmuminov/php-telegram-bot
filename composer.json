@@ -1,0 +1,22 @@
+{
+  "require": {
+    "php": ">=8.1",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "longman/telegram-bot": "^0.78.0",
+    "mrmuminov/php-i18n": "^1.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Enums\\": "Enums\\",
+      "Config\\": "Config\\",
+      "Models\\": "Models\\",
+      "Services\\": "Services\\",
+      "Commands\\": "Commands\\",
+      "Repositories\\": "Repositories\\"
+    },
+    "files": [
+      "App.php"
+    ]
+  }
+}
