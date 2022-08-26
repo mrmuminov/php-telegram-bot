@@ -9,23 +9,30 @@ use Longman\TelegramBot\Telegram;
 use Longman\TelegramBot\Exception\TelegramException;
 
 require __DIR__ . '/vendor/autoload.php';
+$config = require __DIR__ . '/config.php';
 (new App(
     database: new DbConfig(
-        username: "postgres",
-        password: "",
-        dbname: "<db-name>"
+        schema: $config['database']['schema'],
+        host: $config['database']['host'],
+        port: $config['database']['port'],
+        username: $config['database']['username'],
+        password: $config['database']['password'],
+        dbname: $config['database']['dbname'],
+        charset: $config['database']['charset'] ?? 'utf8',
+        options: $config['database']['options'] ?? [],
     ),
     bot: new BotConfig(
-        bot_api_token: '<bot-api-token>',
-        bot_username: '<bot-username>',
-        webhook_url: "<webhook_url>",
+        bot_api_token: $config['bot']['bot_api_token'],
+        bot_username: $config['bot']['bot_username'],
+        webhook_url: $config['bot']['webhook_url'],
     ),
     i18n: new I18n([
-        'path' => __DIR__ . '/Locales',
-        'languages' => ['en'],
-        'language' => 'en',
+        'path' => $config['i18n']['path'],
+        'languages' => $config['i18n']['languages'],
+        'language' => $config['i18n']['language'],
     ]),
-    debug: true,
+    params: $config['params'] ?? [],
+    debug: $config['debug'] ?? false,
 ));
 
 if (App::$debug) {

@@ -18,5 +18,10 @@
     "files": [
       "App.php"
     ]
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "@php -r \"file_exists('config.php') || copy('config.example.php', 'config.php');\""
+    ]
   }
 }
