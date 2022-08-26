@@ -18,7 +18,6 @@ $config = require __DIR__ . '/config.php';
         username: $config['database']['username'],
         password: $config['database']['password'],
         dbname: $config['database']['dbname'],
-        charset: $config['database']['charset'] ?? 'utf8',
         options: $config['database']['options'] ?? [],
     ),
     bot: new BotConfig(

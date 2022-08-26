@@ -15,7 +15,6 @@ class DbConfig
         private readonly string $username = 'postgres',
         private readonly string $password = '',
         private readonly string $dbname = '',
-        private readonly string $charset = 'utf8',
         private readonly array  $options = [],
     )
     {
@@ -23,8 +22,7 @@ class DbConfig
             dsn: $this->schema . ':' .
             'host=' . $this->host . ';' .
             'port=' . $this->port . ';' .
-            'dbname=' . $this->dbname . ';' .
-            'charset=' . $this->charset . ';',
+            'dbname=' . $this->dbname . ';',
             username: $this->username,
             password: $this->password,
             options: $options

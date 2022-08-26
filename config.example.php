@@ -8,7 +8,6 @@ return [
         'username' => 'postgres',
         'password' => '',
         'dbname' => '',
-        'charset' => 'UTF8',
         'options' => [],
     ],
     'bot' => [
