@@ -9,22 +9,25 @@ class DbConfig
     public static PDO $pdo;
 
     public function __construct(
-        public string $schema = 'pgsql',
-        public string $host = 'localhost',
-        public int    $port = 5432,
-        public string $username = 'postgres',
-        public string $password = '',
-        public string $dbname = '',
-        public string $charset = 'utf8',
+        private readonly string $schema = 'pgsql',
+        private readonly string $host = 'localhost',
+        private readonly int    $port = 5432,
+        private readonly string $username = 'postgres',
+        private readonly string $password = '',
+        private readonly string $dbname = '',
+        private readonly string $charset = 'utf8',
+        private readonly array  $options = [],
     )
     {
         self::$pdo = new PDO(
             dsn: $this->schema . ':' .
             'host=' . $this->host . ';' .
             'port=' . $this->port . ';' .
-            'dbname=' . $this->dbname . ';',
+            'dbname=' . $this->dbname . ';' .
+            'charset=' . $this->charset . ';',
             username: $this->username,
             password: $this->password,
+            options: $options
         );
     }
 }

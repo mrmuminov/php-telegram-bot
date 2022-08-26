@@ -10,11 +10,13 @@ class App
     public static bool $debug = false;
     public static BotConfig $bot;
     public static I18n $i18n;
+    public static array $params = [];
 
     public function __construct(
         DbConfig  $database,
         BotConfig $bot,
         I18n      $i18n,
+        array     $params = [],
         bool      $debug = false,
     )
     {
@@ -22,6 +24,7 @@ class App
         self::$bot = $bot;
         self::$debug = $debug;
         self::$i18n = $i18n;
+        self::$params = $params;
     }
 
     public static function log(mixed $message): void
