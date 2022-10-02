@@ -12,7 +12,7 @@
 >```
 * Execute index.php file for checking and setting webhook.
 >```shell
-> $ php index.php
+> php index.php
 >```
 > If there is no error, then there is no problem.
 * Go to the Telegram bot and send the /start command
