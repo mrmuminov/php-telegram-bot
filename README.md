@@ -6,6 +6,10 @@
 * Create new repository from this template and/or clone repository local pc.
 * Create `config.php` from `config.example.php` file to project root path.
 * Change credential information on `config.php` (database information, bot token, bot username, bot webhook url)
+* Install packages via `composer`
+>```shell
+>composer install
+>```
 * Execute index.php file for checking and setting webhook.
 >```shell
 > $ php index.php
