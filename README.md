@@ -14,9 +14,9 @@
 >```shell
 > $ php index.php
 >```
-> If there is no error, then there is no problem..
+> If there is no error, then there is no problem.
 * Go to the Telegram bot and send the /start command
-* Wow, you recive new message from our special (and super xD) telegram bot.
+* Wow, you receive new message from our special (and super xD) telegram bot.
 
 ---
 Any question:
