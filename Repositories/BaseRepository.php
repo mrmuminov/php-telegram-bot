@@ -2,69 +2,37 @@
 
 namespace Repositories;
 
-use PDO;
 use App;
-use PDOException;
+use Models\BaseModel;
+use Yiisoft\ActiveRecord\ActiveQuery;
+use Yiisoft\ActiveRecord\ActiveRecordFactory;
+use Yiisoft\Db\Connection\ConnectionInterface;
 
 abstract class BaseRepository implements RepositoryInterface
 {
+    public ConnectionInterface $db;
+    public ?ActiveRecordFactory $arFactory;
+    public ?string $modelClass = null;
+    protected ?ActiveQuery $_query = null;
 
-    public function __construct()
+    public function __construct(?ConnectionInterface $db = null, ActiveRecordFactory $arFactory = null)
     {
+        $this->db = $db ?? App::$database::$connection;
+        $this->arFactory = $arFactory;
     }
 
-    public static function afterDelete(): void
-    {
-    }
 
-    public static function afterSave(): void
+    public function query(): ActiveQuery
     {
-    }
-
-    public static function beforeDelete(): void
-    {
-    }
-
-    public static function beforeSave(): void
-    {
-    }
-
-    protected function _insert($tableName, $columns): void
-    {
-        $keys = '';
-        $values = '';
-        $params = [];
-        foreach ($columns as $key => $value) {
-            if (empty($value)) {
-                continue;
-            }
-            $params[':' . $key] = $value;
-            $keys .= ', "' . $key . '"';
-            $values .= ', :' . $key;
+        if (is_null($this->_query)) {
+            $this->_query = new ActiveQuery($this->modelClass, $this->db, $this->arFactory);
         }
-        $sql = 'INSERT INTO "' . $tableName . '" (' . ltrim($keys, ', ') . ') VALUES (' . ltrim($values, ', ') . ')';
-        $stmt = App::$database::$pdo->prepare($sql);
-        $stmt->execute($params);
+        return $this->_query;
     }
 
-    protected function _update($tableName, $columns, $conditions): void
+    public function model(): BaseModel
     {
-        $values = '';
-        $params = [];
-        $conditionSql = '';
-        foreach ($conditions as $key => $value) {
-            $conditionSql.= ', ' . $key . ' = :' . $key;
-            $params[':' . $key] = $value;
-        }
-        foreach ($columns as $key => $value) {
-            if (empty($value)) {
-                continue;
-            }
-            $params[':' . $key] = $value;
-            $values .= ', "' . $key . '" = :' . $key;
-        }
-        $sql = 'UPDATE "' . $tableName . '" SET ' . ltrim($values, ', ') . ' WHERE ' . ltrim($conditionSql, ', ');
-        $stmt = App::$database::$pdo->prepare($sql);
-        $stmt->execute($params);
+        return new $this->modelClass($this->db, $this->arFactory);
     }
+
 }

@@ -2,13 +2,12 @@
 
 return [
     'database' => [
-        'schema' => 'pgsql',
         'host' => 'localhost',
         'port' => 5432,
         'username' => 'postgres',
         'password' => '',
         'dbname' => '',
-        'options' => [],
+        'attributes' => [],
     ],
     'bot' => [
         'bot_api_token' => '000000:AAAAAABBBBBBCCCCCC',
@@ -21,5 +20,5 @@ return [
         'language' => 'en',
     ],
     'params' => [],
-    'debug' => true,
+    'development' => true,
 ];

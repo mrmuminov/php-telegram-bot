@@ -3,12 +3,17 @@
 namespace Commands;
 
 use App;
+use Throwable;
 use Services\UserService;
 use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Telegram;
+use Yiisoft\Db\Exception\Exception;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Commands\UserCommand;
+use Yiisoft\Db\Exception\StaleObjectException;
+use Yiisoft\Db\Exception\InvalidConfigException;
 use Longman\TelegramBot\Entities\ServerResponse;
+use Longman\TelegramBot\Exception\TelegramException;
 
 class StartCommand extends UserCommand
 {
@@ -25,24 +30,40 @@ class StartCommand extends UserCommand
         parent::__construct(telegram: $telegram, update: $update);
     }
 
+    /**
+     * @throws InvalidConfigException
+     * @throws StaleObjectException
+     * @throws Exception
+     * @throws Throwable
+     * @throws TelegramException
+     */
     public function execute(): ServerResponse
     {
-        $chat_id = $this->getMessage()->getChat()->getId();
-        $user = $this->userService->getByChatId($chat_id);
+        $chat = $this->getMessage()->getChat();
+        $from = $this->getMessage()->getFrom();
+        $user = $this->userService->getByChatId($chat->getId());
         if ($user === null) {
             $this->userService->create(
-                chat_id: $chat_id,
+                chat_id: $chat->getId(),
                 step: 'start',
+                username: $chat->getUsername(),
+                language: $from->getLanguageCode(),
             );
             return Request::sendMessage([
-                'chat_id' => $chat_id,
+                'chat_id' => $chat->getId(),
                 'text' => App::$i18n->get("Hello"),
             ]);
         }
-        $user->step = 'start';
-        $this->userService->update($user);
+        if ($user->language !== $from->getLanguageCode()) {
+            $user->language = $from->getLanguageCode();
+        }
+        if ($user->username !== $chat->getUsername()) {
+            $user->username = $chat->getUsername();
+        }
+        $this->userService->changeStep($user, 'start');
+        $this->userService->save($user);
         return Request::sendMessage([
-            'chat_id' => $chat_id,
+            'chat_id' => $chat->getId(),
             'text' => App::$i18n->get("Home"),
         ]);
     }

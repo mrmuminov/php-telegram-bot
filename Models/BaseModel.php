@@ -2,6 +2,8 @@
 
 namespace Models;
 
-abstract class BaseModel implements ModelInterface
+use Yiisoft\ActiveRecord\ActiveRecord;
+
+abstract class BaseModel extends ActiveRecord
 {
 }
