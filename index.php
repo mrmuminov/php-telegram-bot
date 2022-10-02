@@ -12,13 +12,12 @@ require __DIR__ . '/vendor/autoload.php';
 $config = require __DIR__ . '/config.php';
 (new App(
     database: new DbConfig(
-        schema: $config['database']['schema'],
         host: $config['database']['host'],
         port: $config['database']['port'],
         username: $config['database']['username'],
         password: $config['database']['password'],
         dbname: $config['database']['dbname'],
-        options: $config['database']['options'] ?? [],
+        attributes: $config['database']['attributes'] ?? [],
     ),
     bot: new BotConfig(
         bot_api_token: $config['bot']['bot_api_token'],
@@ -31,17 +30,20 @@ $config = require __DIR__ . '/config.php';
         'language' => $config['i18n']['language'],
     ]),
     params: $config['params'] ?? [],
-    debug: $config['debug'] ?? false,
+    development: $config['development'] ?? false,
 ));
 
-if (App::$debug) {
+if (App::$development) {
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
 }
 
 try {
     $telegram = new Telegram(App::$bot->bot_api_token, App::$bot->bot_username);
-
+    $telegram->deleteWebhook();
+    $telegram->setWebhook(App::$bot->webhook_url, [
+        'drop_pending_updates' => true,
+    ]);
     $telegram->addCommandClasses([
         StartCommand::class,
         HelloCommand::class,

@@ -2,86 +2,42 @@
 
 namespace Repositories;
 
-use PDO;
-use App;
+use Throwable;
 use Models\User;
-use PDOStatement;
 use Enums\StatusEnum;
+use Yiisoft\Db\Exception\Exception;
+use Yiisoft\ActiveRecord\ActiveQuery;
+use Yiisoft\Db\Exception\StaleObjectException;
+use Yiisoft\Db\Exception\InvalidConfigException;
 
 class UserRepository extends BaseRepository
 {
-    public function __construct()
+    public ?ActiveQuery $_query = null;
+    public ?string $modelClass = User::class;
+
+    /**
+     * @throws Throwable
+     * @throws StaleObjectException
+     */
+    public function delete(User $model)
     {
-        parent::__construct();
+        $model->delete();
     }
 
-    public function delete(User|RepositoryInterface $model)
+    /**
+     * @throws StaleObjectException
+     * @throws Exception
+     */
+    public function save(User $model): void
     {
-        $this->beforeDelete();
-        $this->afterDelete();
+        $model->save();
     }
 
-    public function save(User|RepositoryInterface $model): void
-    {
-        $this->beforeSave();
-        $this->_insert(User::tableName(), $model->attributes());
-        $model->id = App::$database::$pdo->lastInsertId();
-        $this->afterSave();
-    }
-
-    public function update(User|RepositoryInterface $model): void
-    {
-        $this->beforeSave();
-        $columns = $model->attributes();
-        unset($columns['id']);
-        $this->_update(User::tableName(), $columns, [
-            'id' => $model->id,
-        ]);
-        $this->afterSave();
-    }
-
-    public function getById(int $id): ?User
-    {
-        return $this->getOneBy([
-            'id' => $id,
-        ]);
-    }
-
-    private function getOneBy(array $conditions, string $select = '*'): ?User
-    {
-        $stmt = $this->createSelectQuery($conditions, $select);
-        $stmt->execute();
-        $fetched = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (empty($fetched)) {
-            return null;
-        }
-        return User::create(
-            chat_id: $fetched['chat_id'],
-            id: $fetched['id'],
-            step: $fetched['step'],
-            language: $fetched['language'],
-            created_at: $fetched['created_at'],
-            status: StatusEnum::from($fetched['status']),
-        );
-    }
-
-    private function createSelectQuery(array $conditions, string $select): PDOStatement|false
-    {
-        $conditionSql = '';
-        foreach ($conditions as $key => $value) {
-            $conditionSql .= $key . ' = :' . $key;
-        }
-        if (empty($select)) {
-            $select = '*';
-        }
-        $sql = 'SELECT ' . $select . ' FROM "' . User::tableName() . '" WHERE ' . $conditionSql;
-        $stmt = App::$database::$pdo->prepare($sql);
-        foreach ($conditions as $key => $value) {
-            $stmt->bindParam(":" . $key, $value);
-        }
-        return $stmt;
-    }
-
+    /**
+     * @throws InvalidConfigException
+     * @throws Throwable
+     * @throws Exception
+     */
     public function getByChatId(int $chat_id): ?User
     {
         return $this->getOneBy([
@@ -89,25 +45,58 @@ class UserRepository extends BaseRepository
         ]);
     }
 
-    private function getManyBy(array $conditions, string $select = '*'): array
+    /**
+     * @throws InvalidConfigException
+     * @throws Throwable
+     * @throws Exception
+     */
+    public function getOneBy(array $conditions = [], string $select = '*'): ?User
     {
-        $stmt = $this->createSelectQuery($conditions, $select);
-        $stmt->execute();
-        $fetched = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if (empty($fetched)) {
-            return [];
+        $data = $this->query()->select($select)
+            ->where($conditions)
+            ->one();
+
+        if (empty($data)) {
+            return null;
         }
-        $result = [];
-        foreach ($fetched as $item) {
-            $result[] = User::create(
-                chat_id: $item['chat_id'],
-                id: $item['id'],
-                step: $item['step'],
-                language: $item['language'],
-                created_at: $item['created_at'],
-                status: $item['status'],
-            );
-        }
-        return $result;
+        $model = $this->create(
+            id: $data['id'],
+            chat_id: $data['chat_id'],
+            step: $data['step'],
+            phone: $data['phone'],
+            username: $data['username'],
+            language: $data['language'],
+            created_at: $data['created_at'],
+            status: StatusEnum::from($data['status']),
+        );
+        $model->setIsNewRecord(false);
+        $model->setOldAttributes($model->getAttributes());
+        return $model;
     }
+
+    public function create(
+        ?int       $id = null,
+        ?int       $chat_id = null,
+        ?string    $step = null,
+        ?string    $phone = null,
+        ?string    $username = null,
+        ?string    $language = null,
+        ?int       $created_at = null,
+        StatusEnum $status = StatusEnum::ACTIVE,
+    ): User
+    {
+        $model = $this->model();
+        if (!empty($id)) {
+            $model->id = $id;
+        }
+        $model->chat_id = $chat_id;
+        $model->step = $step;
+        $model->phone = $phone;
+        $model->username = $username;
+        $model->language = $language;
+        $model->status = $status->label();
+        $model->created_at = $created_at;
+        return $model;
+    }
+
 }

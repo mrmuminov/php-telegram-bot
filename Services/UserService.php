@@ -2,9 +2,13 @@
 
 namespace Services;
 
+use Throwable;
 use Models\User;
 use Enums\StatusEnum;
 use Repositories\UserRepository;
+use Yiisoft\Db\Exception\Exception;
+use Yiisoft\Db\Exception\StaleObjectException;
+use Yiisoft\Db\Exception\InvalidConfigException;
 
 class UserService extends BaseService
 {
@@ -15,16 +19,26 @@ class UserService extends BaseService
         $this->userRepository = new UserRepository();
     }
 
+    /**
+     * @throws StaleObjectException
+     * @throws Exception
+     */
     public function create(
-        int        $chat_id,
+        ?int       $id = null,
+        ?int       $chat_id = null,
         ?string    $step = null,
+        ?string    $phone = null,
+        ?string    $username = null,
         ?string    $language = null,
         StatusEnum $status = StatusEnum::ACTIVE,
     )
     {
-        $user = User::create(
+        $user = $this->userRepository->create(
+            id: $id,
             chat_id: $chat_id,
             step: $step,
+            phone: $phone,
+            username: $username,
             language: $language,
             created_at: time(),
             status: $status,
@@ -32,18 +46,40 @@ class UserService extends BaseService
         $this->userRepository->save($user);
     }
 
-    public function getById(int $id): ?User
+    /**
+     * @throws StaleObjectException
+     * @throws Exception
+     */
+    public function save(User $user)
     {
-        return $this->userRepository->getById($id);
+        $this->userRepository->save($user);
     }
 
+    /**
+     * @throws InvalidConfigException
+     * @throws Throwable
+     * @throws Exception
+     */
     public function getByChatId(int $chat_id): ?User
     {
         return $this->userRepository->getByChatId($chat_id);
     }
 
-    public function update(User $user)
+    /**
+     * @throws InvalidConfigException
+     * @throws Throwable
+     * @throws Exception
+     */
+    public function update(array $condition, array $attributes)
     {
-        $this->userRepository->update($user);
+        $user = $this->userRepository->getOneBy($condition);
+        $user->setAttributes($attributes);
+        $this->userRepository->save($user);
     }
+
+    public function changeStep(User $user, string $step)
+    {
+        $user->step = $step;
+    }
+
 }
