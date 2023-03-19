@@ -51,5 +51,5 @@ try {
 
     $telegram->handle();
 } catch (TelegramException $e) {
-
+App::log($e);
 }

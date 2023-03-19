@@ -1,7 +1,7 @@
 <?php
 
-use Config\DbConfig;
 use Config\BotConfig;
+use Config\DbConfig;
 use MrMuminov\PhpI18n\I18n;
 
 class App

@@ -2,13 +2,12 @@
 
 namespace Repositories;
 
-use Throwable;
 use Models\User;
-use Enums\StatusEnum;
-use Yiisoft\Db\Exception\Exception;
+use Throwable;
 use Yiisoft\ActiveRecord\ActiveQuery;
-use Yiisoft\Db\Exception\StaleObjectException;
+use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Db\Exception\InvalidConfigException;
+use Yiisoft\Db\Exception\StaleObjectException;
 
 class UserRepository extends BaseRepository
 {
@@ -67,7 +66,7 @@ class UserRepository extends BaseRepository
             username: $data['username'],
             language: $data['language'],
             created_at: $data['created_at'],
-            status: StatusEnum::from($data['status']),
+            status: $data['status'],
         );
         $model->setIsNewRecord(false);
         $model->setOldAttributes($model->getAttributes());
@@ -75,14 +74,14 @@ class UserRepository extends BaseRepository
     }
 
     public function create(
-        ?int       $id = null,
-        ?int       $chat_id = null,
-        ?string    $step = null,
-        ?string    $phone = null,
-        ?string    $username = null,
-        ?string    $language = null,
-        ?int       $created_at = null,
-        StatusEnum $status = StatusEnum::ACTIVE,
+        ?int    $id = null,
+        ?int    $chat_id = null,
+        ?string $step = null,
+        ?string $phone = null,
+        ?string $username = null,
+        ?string $language = null,
+        ?int    $created_at = null,
+        string  $status = 'ACTIVE',
     ): User
     {
         $model = $this->model();
@@ -94,7 +93,7 @@ class UserRepository extends BaseRepository
         $model->phone = $phone;
         $model->username = $username;
         $model->language = $language;
-        $model->status = $status->label();
+        $model->status = $status;
         $model->created_at = $created_at;
         return $model;
     }

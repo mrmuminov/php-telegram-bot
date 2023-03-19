@@ -3,17 +3,12 @@
 namespace Commands;
 
 use App;
-use Throwable;
-use Services\UserService;
+use Longman\TelegramBot\Commands\UserCommand;
+use Longman\TelegramBot\Entities\ServerResponse;
+use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Telegram;
-use Yiisoft\Db\Exception\Exception;
-use Longman\TelegramBot\Entities\Update;
-use Longman\TelegramBot\Commands\UserCommand;
-use Yiisoft\Db\Exception\StaleObjectException;
-use Yiisoft\Db\Exception\InvalidConfigException;
-use Longman\TelegramBot\Entities\ServerResponse;
-use Longman\TelegramBot\Exception\TelegramException;
+use Services\UserService;
 
 class StartCommand extends UserCommand
 {
@@ -30,13 +25,6 @@ class StartCommand extends UserCommand
         parent::__construct(telegram: $telegram, update: $update);
     }
 
-    /**
-     * @throws InvalidConfigException
-     * @throws StaleObjectException
-     * @throws Exception
-     * @throws Throwable
-     * @throws TelegramException
-     */
     public function execute(): ServerResponse
     {
         $chat = $this->getMessage()->getChat();

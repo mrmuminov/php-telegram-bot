@@ -4,5 +4,4 @@ namespace Services;
 
 interface ServiceInterface
 {
-
 }

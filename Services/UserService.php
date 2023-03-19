@@ -2,13 +2,12 @@
 
 namespace Services;
 
-use Throwable;
 use Models\User;
-use Enums\StatusEnum;
 use Repositories\UserRepository;
+use Throwable;
 use Yiisoft\Db\Exception\Exception;
-use Yiisoft\Db\Exception\StaleObjectException;
 use Yiisoft\Db\Exception\InvalidConfigException;
+use Yiisoft\Db\Exception\StaleObjectException;
 
 class UserService extends BaseService
 {
@@ -24,13 +23,13 @@ class UserService extends BaseService
      * @throws Exception
      */
     public function create(
-        ?int       $id = null,
-        ?int       $chat_id = null,
-        ?string    $step = null,
-        ?string    $phone = null,
-        ?string    $username = null,
-        ?string    $language = null,
-        StatusEnum $status = StatusEnum::ACTIVE,
+        ?int    $id = null,
+        ?int    $chat_id = null,
+        ?string $step = null,
+        ?string $phone = null,
+        ?string $username = null,
+        ?string $language = null,
+        string  $status = 'ACTIVE',
     )
     {
         $user = $this->userRepository->create(
