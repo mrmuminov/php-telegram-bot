@@ -4,13 +4,13 @@ namespace Config;
 
 use Yiisoft\Cache\ArrayCache;
 use Yiisoft\Db\Cache\SchemaCache;
-use Yiisoft\Db\Pgsql\ConnectionPDO;
-use Yiisoft\Db\Pgsql\PDODriver;
+use Yiisoft\Db\Pgsql\Connection;
+use Yiisoft\Db\Pgsql\Driver;
 
 class DbConfig
 {
-    public static ConnectionPDO $connection;
-    public static PDODriver $driver;
+    public static Connection $connection;
+    public static Driver $driver;
 
     public function __construct(
         private string       $host = 'localhost',
@@ -22,7 +22,7 @@ class DbConfig
         private ?SchemaCache $schemaCache = null,
     )
     {
-        self::$driver = new PDODriver(
+        self::$driver = new Driver(
             dsn: 'pgsql:' .
             'host=' . $this->host . ';' .
             'port=' . $this->port . ';' .
@@ -36,7 +36,7 @@ class DbConfig
                 psrCache: $arrayCache
             );
         }
-        self::$connection = new ConnectionPDO(
+        self::$connection = new Connection(
             driver: self::$driver,
             schemaCache: $this->schemaCache,
         );

@@ -5,9 +5,9 @@
     "php": "^8.0",
     "ext-pdo": "*",
     "ext-json": "*",
-    "yiisoft/db": "dev-master",
-    "yiisoft/cache": "dev-master",
-    "yiisoft/db-pgsql": "dev-master",
+    "yiisoft/db": "^1.0.0",
+    "yiisoft/cache": "^3.0.0",
+    "yiisoft/db-pgsql": "^1.0.0",
     "mrmuminov/php-i18n": "^1.3",
     "longman/telegram-bot": "^0.78.0",
     "yiisoft/active-record":  "dev-master"

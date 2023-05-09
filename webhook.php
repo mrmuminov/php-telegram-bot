@@ -1,7 +1,5 @@
 <?php
 
-use Commands\HelloCommand;
-use Commands\StartCommand;
 use Longman\TelegramBot\Exception\TelegramException;
 
 require __DIR__ . '/vendor/autoload.php';
@@ -13,11 +11,7 @@ if (App::$development) {
 
 try {
     App::init();
-    App::$telegram->addCommandClasses([
-        StartCommand::class,
-        HelloCommand::class,
-    ]);
-    App::$telegram->handle();
+    App::log(App::setWebHook(dropPendingUpdates: true));
 } catch (TelegramException $e) {
     App::log($e);
 }
